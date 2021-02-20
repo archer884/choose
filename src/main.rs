@@ -1,4 +1,4 @@
-use std::io::{self, stdin, Read};
+use std::io::{self, Read};
 
 use clap::Clap;
 use rand::prelude::SliceRandom;
@@ -22,6 +22,6 @@ fn main() -> io::Result<()> {
 
 fn read_stdin() -> io::Result<String> {
     let mut buf = String::new();
-    stdin().read_to_string(&mut buf)?;
+    io::stdin().read_to_string(&mut buf)?;
     Ok(buf)
 }
