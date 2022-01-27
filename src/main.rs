@@ -1,27 +1,37 @@
 use std::io::{self, Read};
 
+use clap::Parser;
 use rand::prelude::SliceRandom;
-use structopt::StructOpt;
+use squirrel_rng::SquirrelRng;
 
-#[derive(StructOpt, Clone, Debug)]
-struct Opts {
+#[derive(Clone, Debug, Parser)]
+#[clap(author, version)]
+struct Args {
     count: Option<usize>,
-    #[structopt(short, long)]
+    #[clap(short, long)]
     shuffle: bool,
 }
 
-fn main() -> io::Result<()> {
-    let opts = Opts::from_args();
-    let content = read_stdin()?;
-    let mut choices: Vec<_> = content.lines().collect();
+fn main() {
+    if let Err(e) = run(&Args::parse()) {
+        eprintln!("{}", e);
+        std::process::exit(1);
+    }
+}
 
-    if opts.shuffle {
-        choices.shuffle(&mut rand::thread_rng());
+fn run(args: &Args) -> io::Result<()> {
+    let content = read_stdin()?;
+
+    let mut choices: Vec<_> = content.lines().collect();
+    let mut rng = SquirrelRng::new();
+
+    if args.shuffle {
+        choices.shuffle(&mut rng);
         for item in choices {
             println!("{}", item);
         }
     } else {
-        for &item in choices.choose_multiple(&mut rand::thread_rng(), opts.count.unwrap_or(1)) {
+        for &item in choices.choose_multiple(&mut rng, args.count.unwrap_or(1)) {
             println!("{}", item);
         }
     }
