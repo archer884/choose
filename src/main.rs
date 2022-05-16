@@ -8,8 +8,14 @@ use squirrel_rng::SquirrelRng;
 #[clap(author, version)]
 struct Args {
     count: Option<usize>,
+
+    /// shuffle and print all items (ignores count)
     #[clap(short, long)]
     shuffle: bool,
+
+    /// exclude lines starting with
+    #[clap(short, long)]
+    exclude: Option<String>,
 }
 
 fn main() {
@@ -21,8 +27,15 @@ fn main() {
 
 fn run(args: &Args) -> io::Result<()> {
     let content = read_stdin()?;
+    let mut choices: Vec<_> = if let Some(exclude) = &args.exclude {
+        content
+            .lines()
+            .filter(|&line| !line.starts_with(exclude))
+            .collect()
+    } else {
+        content.lines().collect()
+    };
 
-    let mut choices: Vec<_> = content.lines().collect();
     let mut rng = SquirrelRng::new();
 
     if args.shuffle {
