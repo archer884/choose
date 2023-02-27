@@ -5,16 +5,16 @@ use rand::prelude::SliceRandom;
 use squirrel_rng::SquirrelRng;
 
 #[derive(Clone, Debug, Parser)]
-#[clap(author, version)]
+#[command(author, version)]
 struct Args {
     count: Option<usize>,
 
     /// shuffle and print all items (ignores count)
-    #[clap(short, long)]
+    #[arg(short, long)]
     shuffle: bool,
 
     /// exclude lines starting with
-    #[clap(short, long)]
+    #[arg(short, long)]
     exclude: Option<String>,
 }
 
